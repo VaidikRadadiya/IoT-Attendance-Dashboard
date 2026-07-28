@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Portal - Smart RFID Attendance & Defaulter System</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Ambient Decorative Background -->
+  <div class="ambient-orb orb-1"></div>
+  <div class="ambient-orb orb-2"></div>
+
+  <!-- Navigation Header -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <i class="fa-solid fa-graduation-cap brand-icon"></i>
+      <div class="brand-text">
+        <span class="brand-title">Faculty Portal - IoT Attendance</span>
+        <span class="brand-subtitle">Smart Access & Defaulter Email Dispatcher</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <div id="liveStatusBadge" class="status-indicator online">
+        <span class="pulse-dot"></span>
+        <span id="statusText">Google Sheets API Linked</span>
+      </div>
+      <button id="apiConfigBtn" class="icon-btn" title="Configure API Endpoint">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+      <button id="logoutBtn" class="btn btn-secondary hidden">
+        <i class="fa-solid fa-right-from-bracket"></i> Faculty Logout
+      </button>
+    </div>
+  </nav>
+
+  <!-- API Modal Setting -->
+  <div id="apiModal" class="modal hidden">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-cloud"></i> Google Apps Script API Config</h3>
+        <button id="closeApiModal" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="apiUrlInput">Web App Deployment URL:</label>
+        <input type="text" id="apiUrlInput" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
+        <p class="help-text"><i class="fa-solid fa-circle-info"></i> Paste your deployed Google Apps Script URL here to sync live student data directly from Google Sheets.</p>
+      </div>
+      <div class="modal-footer">
+        <button id="saveApiUrlBtn" class="btn btn-primary">Save & Connect</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <!-- ---------------------------------------------------------------------
+         SECTION 1: FACULTY LOGIN PORTAL
+         --------------------------------------------------------------------- -->
+    <section id="loginSection" class="auth-wrapper">
+      <div class="glass-card login-card">
+        <div class="login-header">
+          <div class="avatar-icon">
+            <i class="fa-solid fa-user-tie"></i>
+          </div>
+          <h2>Faculty & Admin Portal</h2>
+          <p>Login to view complete student analytics & send low attendance alerts</p>
+        </div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="studentId"><i class="fa-solid fa-user-shield"></i> Faculty / Admin ID</label>
+            <input type="text" id="studentId" placeholder="e.g. STU102" required value="STU102">
+          </div>
+
+          <div class="form-group">
+            <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
+            <input type="password" id="password" placeholder="Enter password" required value="pass123">
+          </div>
+
+          <div id="loginError" class="alert alert-danger hidden">
+            <i class="fa-solid fa-circle-exclamation"></i> <span id="loginErrorMsg">Invalid Credentials</span>
+          </div>
+
+          <button type="submit" id="loginSubmitBtn" class="btn btn-primary btn-block">
+            <span>Access Faculty Dashboard</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <div class="login-footer">
+          <div class="demo-badge">
+            <i class="fa-solid fa-key"></i> <strong>Faculty Account:</strong> ID: <code>STU102</code> | Pass: <code>pass123</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------------------
+         SECTION 2: FACULTY DASHBOARD VIEW
+         --------------------------------------------------------------------- -->
+    <section id="dashboardSection" class="dashboard-wrapper hidden">
+      
+      <!-- Dashboard Top Banner -->
+      <div class="glass-card welcome-card">
+        <div class="user-profile">
+          <div class="profile-avatar">
+            <i class="fa-solid fa-user-tie"></i>
+          </div>
+          <div class="profile-info">
+            <h1 id="welcomeName">Welcome, MKP Sir</h1>
+            <div class="profile-tags">
+              <span class="tag tag-id"><i class="fa-solid fa-id-badge"></i> Faculty ID: <strong id="userStudentId">STU102</strong></span>
+              <span class="tag tag-dept"><i class="fa-solid fa-building-columns"></i> <span id="userDept">Faculty / Professor</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="welcome-actions">
+          <button id="sendEmailsBtn" class="btn btn-danger">
+            <i class="fa-solid fa-paper-plane"></i> Send Low Attendance Email (<75%)
+          </button>
+          <button id="refreshDataBtn" class="btn btn-primary">
+            <i class="fa-solid fa-rotate-right"></i> Live Sync
+          </button>
+        </div>
+      </div>
+
+      <!-- Class Overview Stats Grid -->
+      <div class="stats-grid">
+        <div class="glass-card stat-card">
+          <div class="stat-icon circle-purple">
+            <i class="fa-solid fa-users-gear"></i>
+          </div>
+          <div class="stat-data">
+            <span class="stat-label">Total Registered Students</span>
+            <h2 id="totalStudentsVal">4</h2>
+            <span class="stat-sub">Class Enrolled</span>
+          </div>
+        </div>
+
+        <div class="glass-card stat-card">
+          <div class="stat-icon circle-blue">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+          <div class="stat-data">
+            <span class="stat-label">Class Average Attendance</span>
+            <h2 id="classAvgVal">88%</h2>
+            <div class="progress-bar-sm">
+              <div id="classAvgProgressFill" class="fill fill-purple" style="width: 88%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card stat-card" id="defaulterCardBox">
+          <div class="stat-icon circle-red" id="statusIconBox">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div class="stat-data">
+            <span class="stat-label">Low Attendance Defaulters</span>
+            <h2 id="defaulterCountVal" style="color: var(--accent-red)">0</h2>
+            <span class="stat-sub">Below 75% Mandatory Cutoff</span>
+          </div>
+        </div>
+
+        <div class="glass-card stat-card">
+          <div class="stat-icon circle-green">
+            <i class="fa-solid fa-fingerprint"></i>
+          </div>
+          <div class="stat-data">
+            <span class="stat-label">Total RFID Logged Scans</span>
+            <h2 id="totalScansVal">0</h2>
+            <span class="stat-sub">Verified Door Access</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------------
+           SECTION 3: ALL-STUDENTS PERFORMANCE ROSTER
+           --------------------------------------------------------------------- -->
+      <div class="glass-card logs-card">
+        <div class="card-header">
+          <div class="header-title">
+            <h2><i class="fa-solid fa-users-viewfinder"></i> Student Attendance Analytics & Roster</h2>
+            <span class="badge" id="studentRosterCountBadge">4 Enrolled</span>
+          </div>
+
+          <div class="table-controls">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="rosterSearchInput" placeholder="Search student name or ID...">
+            </div>
+
+            <select id="rosterFilterSelect" class="filter-select">
+              <option value="ALL">All Students</option>
+              <option value="DEFAULTER">Defaulters (<75%) Only</option>
+              <option value="ELIGIBLE">Eligible (&ge;75%) Only</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Department</th>
+                <th>Attended / Base</th>
+                <th>Attendance %</th>
+                <th>Eligibility Status</th>
+                <th>Quick Action</th>
+              </tr>
+            </thead>
+            <tbody id="studentRosterTableBody">
+              <!-- Injected by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------------
+           SECTION 4: LIVE RFID SCAN ACTIVITY LOG
+           --------------------------------------------------------------------- -->
+      <div class="glass-card logs-card">
+        <div class="card-header">
+          <div class="header-title">
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Live RFID Scan Stream (ESP32)</h2>
+            <span class="badge" id="logCountBadge">0 Records</span>
+          </div>
+
+          <div class="table-controls">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="searchInput" placeholder="Search logs...">
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Student Name</th>
+                <th>Subject Name</th>
+                <th>Status</th>
+                <th>Verification</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceTableBody">
+              <!-- Injected by app.js -->
+            </tbody>
+          </table>
+          <div id="emptyTableMsg" class="empty-state hidden">
+            <i class="fa-solid fa-folder-open"></i>
+            <p>No matching attendance records found.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
