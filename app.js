@@ -199,13 +199,8 @@ function processAnalytics(logs) {
 }
 
 function useFallbackData() {
-  const fallbackLogs = [
-    { date: new Date().toLocaleDateString(), time: "10:15 AM", name: "Vaidik", roll: "23EC001", id: "STU001", status: "PASS", verification: "RFID + Face 1:1" },
-    { date: new Date().toLocaleDateString(), time: "10:12 AM", name: "Pallav", roll: "23EC002", id: "STU002", status: "PASS", verification: "RFID + Face 1:1" },
-    { date: new Date().toLocaleDateString(), time: "09:45 AM", name: "Smit", roll: "23EC003", id: "STU003", status: "PASS", verification: "RFID + Face 1:1" }
-  ];
-  scanLogsData = fallbackLogs;
-  processAnalytics(fallbackLogs);
+  scanLogsData = [];
+  processAnalytics([]);
 }
 
 // Render Roster Table
