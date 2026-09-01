@@ -61,9 +61,7 @@
 
   <div class="container">
     
-    <!-- ---------------------------------------------------------------------
-         SECTION 1: FACULTY LOGIN PORTAL
-         --------------------------------------------------------------------- -->
+    <!-- SECTION 1: FACULTY LOGIN PORTAL -->
     <section id="loginSection" class="auth-wrapper">
       <div class="glass-card login-card">
         <div class="login-header">
@@ -103,9 +101,7 @@
       </div>
     </section>
 
-    <!-- ---------------------------------------------------------------------
-         SECTION 2: FACULTY DASHBOARD VIEW
-         --------------------------------------------------------------------- -->
+    <!-- SECTION 2: FACULTY DASHBOARD VIEW -->
     <section id="dashboardSection" class="dashboard-wrapper hidden">
       
       <!-- Dashboard Top Banner -->
@@ -125,7 +121,7 @@
 
         <div class="welcome-actions">
           <button id="sendEmailsBtn" class="btn btn-danger">
-            <i class="fa-solid fa-paper-plane"></i> Send Low Attendance Email (<75%)
+            <i class="fa-solid fa-paper-plane"></i> Send Low Attendance Email (&lt;75%)
           </button>
           <button id="refreshDataBtn" class="btn btn-primary">
             <i class="fa-solid fa-rotate-right"></i> Live Sync
@@ -141,7 +137,7 @@
           </div>
           <div class="stat-data">
             <span class="stat-label">Total Registered Students</span>
-            <h2 id="totalStudentsVal">4</h2>
+            <h2 id="totalStudentsVal">0</h2>
             <span class="stat-sub">Class Enrolled</span>
           </div>
         </div>
@@ -152,9 +148,9 @@
           </div>
           <div class="stat-data">
             <span class="stat-label">Class Average Attendance</span>
-            <h2 id="classAvgVal">88%</h2>
+            <h2 id="classAvgVal">0%</h2>
             <div class="progress-bar-sm">
-              <div id="classAvgProgressFill" class="fill fill-purple" style="width: 88%"></div>
+              <div id="classAvgProgressFill" class="fill fill-purple" style="width: 0%"></div>
             </div>
           </div>
         </div>
@@ -182,14 +178,12 @@
         </div>
       </div>
 
-      <!-- ---------------------------------------------------------------------
-           SECTION 3: ALL-STUDENTS PERFORMANCE ROSTER
-           --------------------------------------------------------------------- -->
+      <!-- SECTION 3: ALL-STUDENTS PERFORMANCE ROSTER -->
       <div class="glass-card logs-card">
         <div class="card-header">
           <div class="header-title">
             <h2><i class="fa-solid fa-users-viewfinder"></i> Student Attendance Analytics & Roster</h2>
-            <span class="badge" id="studentRosterCountBadge">4 Enrolled</span>
+            <span class="badge" id="studentRosterCountBadge">0 Enrolled</span>
           </div>
 
           <div class="table-controls">
@@ -200,7 +194,7 @@
 
             <select id="rosterFilterSelect" class="filter-select">
               <option value="ALL">All Students</option>
-              <option value="DEFAULTER">Defaulters (<75%) Only</option>
+              <option value="DEFAULTER">Defaulters (&lt;75%) Only</option>
               <option value="ELIGIBLE">Eligible (&ge;75%) Only</option>
             </select>
           </div>
@@ -226,9 +220,7 @@
         </div>
       </div>
 
-      <!-- ---------------------------------------------------------------------
-           SECTION 4: LIVE RFID SCAN ACTIVITY LOG
-           --------------------------------------------------------------------- -->
+      <!-- SECTION 4: LIVE RFID SCAN ACTIVITY LOG -->
       <div class="glass-card logs-card">
         <div class="card-header">
           <div class="header-title">
